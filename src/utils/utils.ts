@@ -35,4 +35,17 @@ export const Validador = {
   criptografarSenha: (senha: string): string => {
     return bcrypt.hashSync(senha, 8);
   },
+
+  removerSenhaTodos(arrayObj) {
+    for (let x = 0; x < arrayObj.length; x++){
+      arrayObj[x].senha = undefined;
+    }
+    return arrayObj;
+  },
+
+  removerSenha(obj) {
+    obj.senha = undefined;
+    return obj;
+  }
 };
+

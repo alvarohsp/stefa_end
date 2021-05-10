@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import AlunoController from '../controllers/aluno.controller';
 import Aluno from '../entities/aluno.entity';
 import Mensagem from '../utils/mensagem';
+import { Validador } from '../utils/utils';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/aluno/:id', async (req: Request, res: Response, next: NextFunction)
   try {
     const { id } = req.params;
     const aluno: Aluno = await new AlunoController().obterPorId(Number(id));
-    res.json(aluno);
+    res.json(Validador.removerSenha(aluno));
   } catch (e) {
     next(e);
   }
@@ -47,7 +48,7 @@ router.get('/aluno/:id', async (req: Request, res: Response, next: NextFunction)
 router.get('/aluno', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const alunos: Aluno[] = await new AlunoController().listar();
-    res.json(alunos);
+    res.json(Validador.removerSenhaTodos(alunos));
   } catch (e) {
     next(e);
   }

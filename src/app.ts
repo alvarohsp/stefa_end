@@ -49,15 +49,15 @@ class App {
   // #pegabandeira
   private publicRoutes() {
     this.app.use('/stefanini', AuthRouter);
+    this.app.use('/stefanini', AlunoRouter);
+    this.app.use('/stefanini', ProfessorRouter);
   }
 
   // #pegabandeira
   private privateRoutes() {
     this.authMiddleware();
-    this.app.use('/stefanini', AlunoRouter);
     this.app.use('/stefanini', AulaRouter);
     this.app.use('/stefanini', CursoRouter);
-    this.app.use('/stefanini', ProfessorRouter);
   }
 
   private authMiddleware() {

@@ -15,7 +15,7 @@ export default class AlunoController {
   }
 
   // #pegabandeira
-  async listar(filtro: FilterQuery<Aluno> = {}): Promise<Aluno[]> {
+  async listar(filtro: FilterQuery<Aluno> = { tipo: {$eq: 2} }): Promise<Aluno[]> {
     return await AlunoRepository.listar(filtro);
   }
 

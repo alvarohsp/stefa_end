@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import ProfessorController from '../controllers/professor.controller';
 import Professor from '../entities/professor.entity';
 import Mensagem from '../utils/mensagem';
+import { Validador } from '../utils/utils';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/professor/:id', async (req: Request, res: Response, next: NextFunct
   try {
     const { id } = req.params;
     const professor: Professor = await new ProfessorController().obterPorId(Number(id));
-    res.json(professor);
+    res.json(Validador.removerSenha(professor));
   } catch (e) {
     next(e);
   }
@@ -47,7 +48,7 @@ router.get('/professor/:id', async (req: Request, res: Response, next: NextFunct
 router.get('/professor', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const professores: Professor[] = await new ProfessorController().listar();
-    res.json(professores);
+    res.json(Validador.removerSenhaTodos(professores));
   } catch (e) {
     next(e);
   }
