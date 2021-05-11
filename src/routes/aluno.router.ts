@@ -3,6 +3,7 @@ import AlunoController from '../controllers/aluno.controller';
 import Aluno from '../entities/aluno.entity';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import Exception from '../utils/exceptions/exception';
 
 const router = express.Router();
 
@@ -39,6 +40,9 @@ router.get('/aluno/:id', async (req: Request, res: Response, next: NextFunction)
   try {
     const { id } = req.params;
     const aluno: Aluno = await new AlunoController().obterPorId(Number(id));
+    if (!aluno || aluno.tipo != 2){
+      throw new Exception('Não existe aluno com esse ID!'); 
+    }
     res.json(Validador.removerSenha(aluno));
   } catch (e) {
     next(e);

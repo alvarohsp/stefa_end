@@ -3,6 +3,8 @@ import AlunoRepository from '../repositories/aluno.repository';
 import { FilterQuery } from '../utils/database/database';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import Exception from '../utils/exceptions/exception';
+import UsuarioRepository from '../repositories/usuario.repository';
 
 export default class AlunoController {
   async obterPorId(id: number): Promise<Aluno> {
@@ -23,6 +25,10 @@ export default class AlunoController {
   async incluir(aluno: Aluno) {
     const { nome, formacao, idade, email, senha } = aluno;
     Validador.validarParametros([{ nome }, { formacao }, { idade }, { email }, { senha }]);
+    const alun = await UsuarioRepository.obter({ email });
+    if (alun){
+      throw new Exception('Esse e-mail ja se encontra cadastrado!');
+    }
     const id = await AlunoRepository.incluir(aluno);
     return new Mensagem('Aluno incluido com sucesso!', {
       id,

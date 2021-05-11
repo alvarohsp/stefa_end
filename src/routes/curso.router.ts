@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/curso', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const mensagem: Mensagem = await new CursoController().incluir(req.body);
+    const mensagem: Mensagem = await new CursoController().incluir(req.body, req.uid);
     res.json(mensagem);
   } catch (e) {
     next(e);

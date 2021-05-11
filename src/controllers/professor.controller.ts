@@ -3,6 +3,8 @@ import ProfessorRepository from '../repositories/professor.repository';
 import { FilterQuery } from '../utils/database/database';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import UsuarioRepository from '../repositories/usuario.repository';
+import Exception from '../utils/exceptions/exception';
 
 export default class ProfessorController {
   async obterPorId(id: number): Promise<Professor> {
@@ -27,6 +29,10 @@ export default class ProfessorController {
 
     Validador.validarParametros([{ nome }, { email }, { senha }]);
     professor.tipo = 1;
+    const prof = await UsuarioRepository.obter({ email });
+    if (prof){
+      throw new Exception('Esse e-mail ja se encontra cadastrado!');
+    }
 
     const id = await ProfessorRepository.incluir(professor);
 

@@ -3,6 +3,7 @@ import ProfessorController from '../controllers/professor.controller';
 import Professor from '../entities/professor.entity';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import Exception from '../utils/exceptions/exception';
 
 const router = express.Router();
 
@@ -39,6 +40,9 @@ router.get('/professor/:id', async (req: Request, res: Response, next: NextFunct
   try {
     const { id } = req.params;
     const professor: Professor = await new ProfessorController().obterPorId(Number(id));
+    if (!professor || professor.tipo !=1){
+      throw new Exception('Não existe professor com esse ID!'); 
+    }
     res.json(Validador.removerSenha(professor));
   } catch (e) {
     next(e);

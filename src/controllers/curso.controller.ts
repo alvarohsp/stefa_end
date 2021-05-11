@@ -1,8 +1,11 @@
 import Curso from '../entities/curso.entity';
 import CursoRepository from '../repositories/curso.repository';
 import { FilterQuery } from '../utils/database/database';
+import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import Exception from '../utils/exceptions/exception';
+
 
 export default class CursoController {
   async obterPorId(id: number): Promise<Curso> {
@@ -18,13 +21,24 @@ export default class CursoController {
     return await CursoRepository.listar(filtro);
   }
 
-  async incluir(curso: Curso) {
+  async incluir(curso: Curso, uid: any) {
     const { nome, descricao, aulas, idProfessor } = curso;
     Validador.validarParametros([{ nome }, { descricao }, { aulas }, { idProfessor }]);
+    
+    const { tipo } = uid
+    const cur = await CursoRepository.obter({ nome });
+    
+    if (tipo !=1){
+      throw new UnauthorizedException("Somente professores podem cadastrar cursos");
+    }
+    
+    if (cur){
+      throw new Exception('Já existe um curso com esse nome!');
+    }
 
     const id = await CursoRepository.incluir(curso);
 
-    return new Mensagem('Aula incluido com sucesso!', {
+    return new Mensagem('Curso incluido com sucesso!', {
       id,
     });
   }
