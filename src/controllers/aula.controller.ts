@@ -2,6 +2,7 @@ import Aula from '../models/aula.model';
 import CursoRepository from '../repositories/curso.repository';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
+import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
 
 export default class AulaController {
   async obterPorId(id: number, idCurso: number): Promise<Aula> {
@@ -16,9 +17,13 @@ export default class AulaController {
     return curso.aulas;
   }
 
-  async incluir(aula: Aula) {
+  async incluir(aula: Aula, req: any) {
     const { nome, duracao, topicos, idCurso } = aula;
     Validador.validarParametros([{ nome }, { duracao }, { topicos }, { idCurso }]);
+    
+    if (req.uid.tipo !=1){
+      throw new UnauthorizedException("Somente professores podem cadastrar aulas");
+    }
 
     const curso = await CursoRepository.obterPorId(idCurso);
 

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/aula', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const mensagem: Mensagem = await new AulaController().incluir(req.body);
+    const mensagem: Mensagem = await new AulaController().incluir(req.body, req);
     res.json(mensagem);
   } catch (e) {
     next(e);
@@ -49,6 +49,7 @@ router.get('/aula/:id', async (req: Request, res: Response, next: NextFunction) 
 router.get('/aula', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { idCurso } = req.query;
+    console.log(req.query)
     const aulas: Aula[] = await new AulaController().listar(Number(idCurso));
     res.json(aulas);
   } catch (e) {

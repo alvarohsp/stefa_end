@@ -5,6 +5,7 @@ import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
 import Exception from '../utils/exceptions/exception';
+import professorRepository from '../repositories/professor.repository';
 
 
 export default class CursoController {
@@ -21,16 +22,20 @@ export default class CursoController {
     return await CursoRepository.listar(filtro);
   }
 
-  async incluir(curso: Curso, uid: any) {
-    const { nome, descricao, aulas, idProfessor } = curso;
+  async incluir(curso: Curso, req: any) {
+    let { nome, descricao, aulas, idProfessor } = curso;
     Validador.validarParametros([{ nome }, { descricao }, { aulas }, { idProfessor }]);
-    
-    const { tipo } = uid
+
     const cur = await CursoRepository.obter({ nome });
+
+    const prof = await professorRepository.obterPorId(idProfessor)
+
     
-    if (tipo !=1){
-      throw new UnauthorizedException("Somente professores podem cadastrar cursos");
+    if (req.uid.tipo !=1 || prof.tipo !=1){
+      throw new UnauthorizedException("Somente professores podem cadastrar cursos ou ser vinculado a um curso");
     }
+
+    console.log(prof.tipo)
     
     if (cur){
       throw new Exception('Já existe um curso com esse nome!');
@@ -38,6 +43,11 @@ export default class CursoController {
 
     const id = await CursoRepository.incluir(curso);
 
+    curso.aulas[0].idCurso = id;
+    curso.aulas[0].id = 1
+
+    await CursoRepository.alterar({ id: id }, curso);
+  
     return new Mensagem('Curso incluido com sucesso!', {
       id,
     });
@@ -49,7 +59,7 @@ export default class CursoController {
 
     await CursoRepository.alterar({ id }, curso);
 
-    return new Mensagem('Aula alterado com sucesso!', {
+    return new Mensagem('Curso alterado com sucesso!', {
       id,
     });
   }
@@ -59,7 +69,7 @@ export default class CursoController {
 
     await CursoRepository.excluir({ id });
 
-    return new Mensagem('Aula excluido com sucesso!', {
+    return new Mensagem('Curso excluido com sucesso!', {
       id,
     });
   }
