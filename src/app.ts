@@ -12,6 +12,7 @@ import auth from './utils/middlewares/auth.middleware';
 
 class App {
   public app: express.Application;
+  
 
   constructor() {
     this.app = express();
@@ -20,6 +21,8 @@ class App {
     this.publicRoutes();
     this.privateRoutes();
     this.endMiddlewares();
+
+    
   }
 
   private database() {
@@ -46,6 +49,9 @@ class App {
     });
   }
 
+  
+  
+
   // #pegabandeira
   private publicRoutes() {
     this.app.use('/stefanini', AuthRouter);
@@ -58,6 +64,7 @@ class App {
     this.authMiddleware();
     this.app.use('/stefanini', AulaRouter);
     this.app.use('/stefanini', CursoRouter);
+
   }
 
   private authMiddleware() {

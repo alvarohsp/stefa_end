@@ -4,6 +4,9 @@ import Aluno from '../entities/aluno.entity';
 import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
 import Exception from '../utils/exceptions/exception';
+import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
+import config from '../utils/config/config';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -19,7 +22,8 @@ router.post('/aluno', async (req: Request, res: Response, next: NextFunction) =>
 router.put('/aluno/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const mensagem: Mensagem = await new AlunoController().alterar(Number(id), req.body);
+    Validador.pegarToken(req);
+    const mensagem: Mensagem = await new AlunoController().alterar(Number(id), req.body, req);
     res.json(mensagem);
   } catch (e) {
     next(e);
@@ -29,7 +33,8 @@ router.put('/aluno/:id', async (req: Request, res: Response, next: NextFunction)
 router.delete('/aluno/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const mensagem: Mensagem = await new AlunoController().excluir(Number(id));
+    Validador.pegarToken(req);
+    const mensagem: Mensagem = await new AlunoController().excluir(Number(id), req);
     res.json(mensagem);
   } catch (e) {
     next(e);

@@ -5,6 +5,8 @@ import Mensagem from '../utils/mensagem';
 import { Validador } from '../utils/utils';
 import UsuarioRepository from '../repositories/usuario.repository';
 import Exception from '../utils/exceptions/exception';
+import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
+import CursoRepository from '../repositories/curso.repository'; 
 
 export default class ProfessorController {
   async obterPorId(id: number): Promise<Professor> {
@@ -41,10 +43,13 @@ export default class ProfessorController {
     });
   }
 
-  async alterar(id: number, professor: Professor) {
+  async alterar(id: number, professor: Professor, req) {
     const { nome, email, senha } = professor;
 
     Validador.validarParametros([{ id }, { nome }, { email }, { senha }]);
+    const user = await ProfessorRepository.obterPorId(id);
+    
+    Validador.verificarAuthEdit(req, user, professor);
 
     await ProfessorRepository.alterar({ id }, professor);
 
@@ -53,8 +58,21 @@ export default class ProfessorController {
     });
   }
 
-  async excluir(id: number) {
+  async excluir(id: number, req) {
     Validador.validarParametros([{ id }]);
+
+    const user = await ProfessorRepository.obterPorId(id);
+    const cursos = await CursoRepository.listar();
+
+    for (let x = 0; x < cursos.length; x++){
+     if (cursos[x].idProfessor == user.id){
+       throw new Exception("Não é possivel excluir um professor que esteja lecionando algum curso!");
+     }
+    }
+
+    Validador.verificarAuthDel(req, user);
+
+
 
     await ProfessorRepository.excluir({ id });
 

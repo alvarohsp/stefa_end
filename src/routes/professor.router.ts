@@ -18,8 +18,9 @@ router.post('/professor', async (req: Request, res: Response, next: NextFunction
 
 router.put('/professor/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    Validador.pegarToken(req);
     const { id } = req.params;
-    const mensagem: Mensagem = await new ProfessorController().alterar(Number(id), req.body);
+    const mensagem: Mensagem = await new ProfessorController().alterar(Number(id), req.body, req);
     res.json(mensagem);
   } catch (e) {
     next(e);
@@ -28,8 +29,9 @@ router.put('/professor/:id', async (req: Request, res: Response, next: NextFunct
 
 router.delete('/professor/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    Validador.pegarToken(req);
     const { id } = req.params;
-    const mensagem: Mensagem = await new ProfessorController().excluir(Number(id));
+    const mensagem: Mensagem = await new ProfessorController().excluir(Number(id), req);
     res.json(mensagem);
   } catch (e) {
     next(e);

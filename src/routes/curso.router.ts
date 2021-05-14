@@ -17,7 +17,7 @@ router.post('/curso', async (req: Request, res: Response, next: NextFunction) =>
 router.put('/curso/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const mensagem: Mensagem = await new CursoController().alterar(Number(id), req.body);
+    const mensagem: Mensagem = await new CursoController().alterar(Number(id), req.body, req);
     res.json(mensagem);
   } catch (e) {
     next(e);
@@ -27,7 +27,7 @@ router.put('/curso/:id', async (req: Request, res: Response, next: NextFunction)
 router.delete('/curso/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const mensagem: Mensagem = await new CursoController().excluir(Number(id));
+    const mensagem: Mensagem = await new CursoController().excluir(Number(id), req);
     res.json(mensagem);
   } catch (e) {
     next(e);

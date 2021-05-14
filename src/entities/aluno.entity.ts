@@ -4,7 +4,7 @@ import Usuario from './usuario.entity';
 export default class Aluno extends Usuario {
   idade: string;
   formacao: string;
-  cursos?: Curso[];
+  cursos?: Number[];
 
   constructor() {
     super();

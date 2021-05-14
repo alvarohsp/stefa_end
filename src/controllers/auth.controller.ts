@@ -6,6 +6,7 @@ import UsuarioRepository from '../repositories/usuario.repository';
 import config from '../utils/config/config';
 import UnauthorizedException from '../utils/exceptions/unauthorized.exception';
 import { Validador } from '../utils/utils';
+import Exception from '../utils/exceptions/exception';
 
 export default class AlunoController {
   async login(crendeciais: Usuario): Promise<Login> {
@@ -16,12 +17,12 @@ export default class AlunoController {
 
     // #pegabandeira
     if (!usuario) {
-      throw new UnauthorizedException('Usuario ou senha invalidos');
+      throw new Exception('Não existe conta com esse E-mail!');
     }
 
-    await Validador.validarSenha(senha, usuario.senha);
+    Validador.validarSenha(senha, usuario.senha);
 
-    const accessToken = jwt.sign({ email: usuario.email, tipo: usuario.tipo }, config.auth.secret, {
+    const accessToken = jwt.sign({ email: usuario.email, tipo: usuario.tipo, id: usuario.id }, config.auth.secret, {
       expiresIn: config.auth.expiresIn,
     });
 
@@ -30,6 +31,7 @@ export default class AlunoController {
         email: usuario.email,
         nome: usuario.nome,
         tipo: usuario.tipo,
+        id: usuario.id,
       },
       token: accessToken,
       expires: getTime(Date.now() / 1000) + 604800,
